@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:recap/controllers/home_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recap/controllers/remainder_controller.dart';
 import 'package:recap/models/remainder.dart';
 
-class AlertFormScreen extends StatefulWidget {
+class AlertFormScreen extends ConsumerStatefulWidget {
   final Remainder? remainder;
-  const AlertFormScreen({Key? key, this.remainder}) : super(key: key);
+  const AlertFormScreen({
+    Key? key,
+    this.remainder,
+  }) : super(key: key);
 
   @override
-  State<AlertFormScreen> createState() => _AlertFormScreenState();
+  ConsumerState createState() => _AlertFormScreenState();
 }
 
-class _AlertFormScreenState extends State<AlertFormScreen> {
-  final HomeController homeController = HomeController();
+class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleTextEditingController;
   late final TextEditingController _contentTextEditingController;
@@ -49,12 +52,82 @@ class _AlertFormScreenState extends State<AlertFormScreen> {
     super.dispose();
   }
 
+  Future pickDateAndTime() async {
+    await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      helpText: "Select Time",
+      cancelText: "None",
+      confirmText: "Next",
+    ).then((value) async {
+      if (value == null) {
+        setState(() {
+          scheduledDateTime = null;
+          _dateTextEditingController.clear();
+        });
+        return;
+      }
+      DateTime? dateTime = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(const Duration(days: 365)),
+        helpText: "Select Date",
+        cancelText: "None",
+        confirmText: "Schedule",
+      );
+      if (dateTime == null) {
+        setState(() {
+          scheduledDateTime = null;
+          _dateTextEditingController.clear();
+        });
+        return null;
+      }
+      dateTime =
+          dateTime.add(Duration(hours: value.hour, minutes: value.minute));
+      setState(() {
+        scheduledDateTime = dateTime;
+        _dateTextEditingController.text =
+            "${scheduledDateTime?.day}/${scheduledDateTime?.month}/${scheduledDateTime?.year}  ${scheduledDateTime?.hour}:${scheduledDateTime?.minute}";
+      });
+      return null;
+    });
+  }
+
+  Future insertRemainder() async {
+    if (_formKey.currentState!.validate()) {
+      if (widget.remainder != null) {
+        Remainder newRemainder = Remainder(
+          _titleTextEditingController.text,
+          _contentTextEditingController.text,
+          isPersistent,
+          selectedImportance.value,
+          scheduledDateTime,
+        );
+        await ref
+            .read(remainderListProvider.notifier)
+            .editRemainder(widget.remainder!.id, newRemainder)
+            .then((value) => Navigator.pop(context));
+      } else {
+        Remainder newRemainder = Remainder(
+          _titleTextEditingController.text,
+          _contentTextEditingController.text,
+          isPersistent,
+          selectedImportance.value,
+          scheduledDateTime,
+        );
+        await ref
+            .read(remainderListProvider.notifier)
+            .addRemainder(newRemainder)
+            .then((value) => Navigator.pop(context));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
           title: (widget.remainder != null)
@@ -83,15 +156,15 @@ class _AlertFormScreenState extends State<AlertFormScreen> {
                   textInputAction: TextInputAction.next,
                   textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(hintText: "Title"),
+                  validator: (val) {
+                    if (val?.isEmpty ?? true) return "Please enter the title";
+                    return null;
+                  },
                   style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
-                  validator: (val) {
-                    if (val?.isEmpty ?? true) return "Please enter the title";
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -108,15 +181,15 @@ class _AlertFormScreenState extends State<AlertFormScreen> {
                   minLines: 2,
                   maxLines: 5,
                   decoration: const InputDecoration(hintText: "Content"),
+                  validator: (val) {
+                    if (val?.isEmpty ?? true) return "Please enter the content";
+                    return null;
+                  },
                   style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
-                  validator: (val) {
-                    if (val?.isEmpty ?? true) return "Please enter the content";
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -183,11 +256,6 @@ class _AlertFormScreenState extends State<AlertFormScreen> {
                   controller: _dateTextEditingController,
                   readOnly: true,
                   decoration: const InputDecoration(hintText: "None"),
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
                   validator: (val) {
                     if (scheduledDateTime == null) return null;
                     if (scheduledDateTime!.isBefore(DateTime.now())) {
@@ -195,45 +263,12 @@ class _AlertFormScreenState extends State<AlertFormScreen> {
                     }
                     return null;
                   },
-                  onTap: () async {
-                    TimeOfDay? timeOfDay = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                      helpText: "Select Time",
-                      cancelText: "None",
-                      confirmText: "Next",
-                    );
-                    if (timeOfDay == null) {
-                      setState(() {
-                        scheduledDateTime = null;
-                        _dateTextEditingController.clear();
-                      });
-                      return;
-                    }
-                    DateTime? dateTime = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                      helpText: "Select Date",
-                      cancelText: "None",
-                      confirmText: "Schedule",
-                    );
-                    if (dateTime == null) {
-                      setState(() {
-                        scheduledDateTime = null;
-                        _dateTextEditingController.clear();
-                      });
-                      return;
-                    }
-                    dateTime = dateTime.add(Duration(
-                        hours: timeOfDay.hour, minutes: timeOfDay.minute));
-                    setState(() {
-                      scheduledDateTime = dateTime;
-                      _dateTextEditingController.text =
-                          "${scheduledDateTime?.day}/${scheduledDateTime?.month}/${scheduledDateTime?.year}  ${scheduledDateTime?.hour}:${scheduledDateTime?.minute}";
-                    });
-                  },
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  onTap: pickDateAndTime,
                 ),
                 const SizedBox(height: 20),
                 CheckboxListTile(
@@ -259,33 +294,7 @@ class _AlertFormScreenState extends State<AlertFormScreen> {
                 ),
                 const SizedBox(height: 25),
                 ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.remainder != null) {
-                        Remainder newRemainder = Remainder(
-                          _titleTextEditingController.text,
-                          _contentTextEditingController.text,
-                          isPersistent,
-                          selectedImportance.value,
-                          scheduledDateTime,
-                        );
-                        await homeController
-                            .editRemainder(widget.remainder!.id, newRemainder)
-                            .then((value) => Navigator.pop(context));
-                      } else {
-                        Remainder newRemainder = Remainder(
-                          _titleTextEditingController.text,
-                          _contentTextEditingController.text,
-                          isPersistent,
-                          selectedImportance.value,
-                          scheduledDateTime,
-                        );
-                        await homeController
-                            .addRemainder(newRemainder)
-                            .then((value) => Navigator.pop(context));
-                      }
-                    }
-                  },
+                  onPressed: insertRemainder,
                   child: (widget.remainder != null)
                       ? const Text("Edit Remainder")
                       : const Text("Create Remainder"),

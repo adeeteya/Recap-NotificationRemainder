@@ -1,24 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:recap/controllers/home_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recap/controllers/settings_controller.dart';
 import 'package:recap/screens/home.dart';
+import 'package:recap/services/isar_service.dart';
+import 'package:recap/services/notification_service.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await HomeController().initialize();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      statusBarColor: Colors.transparent,
+    ),
+  );
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  await IsarService().init();
+  await NotificationService().init();
   FlutterNativeSplash.remove();
-  runApp(const RecapApp());
+  runApp(const ProviderScope(child: RecapApp()));
 }
 
-class RecapApp extends StatelessWidget {
-  const RecapApp({super.key});
+class RecapApp extends ConsumerWidget {
+  const RecapApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settingsData = ref.watch(settingsProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Recap - A Notification Remainder',
+      title: 'Recap',
+      themeMode: settingsData.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.indigo,

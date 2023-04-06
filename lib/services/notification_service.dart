@@ -25,17 +25,16 @@ class NotificationService {
       android: AndroidNotificationDetails(
         'Recap',
         'Notification Remainder',
-        icon: 'ic_stat_circle_notifications',
-        enableLights: true,
         channelDescription: "Notification Remainder for the user",
-        visibility: NotificationVisibility.public,
-        category: AndroidNotificationCategory.reminder,
-        audioAttributesUsage: AudioAttributesUsage.notification,
-        ongoing: isPersistent,
-        autoCancel: !isPersistent,
+        icon: 'ic_stat_circle_notifications',
         importance: importance,
         priority: Priority.max,
         styleInformation: const BigTextStyleInformation(''),
+        autoCancel: !isPersistent,
+        ongoing: isPersistent,
+        enableLights: true,
+        visibility: NotificationVisibility.public,
+        category: AndroidNotificationCategory.reminder,
       ),
     );
   }

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:recap/controllers/notification_controller.dart';
 import 'package:recap/models/remainder.dart';
+import 'package:recap/services/isar_service.dart';
+import 'package:recap/services/notification_service.dart';
 
-class HomeController extends ChangeNotifier {
-  static late final Isar _isar;
-  static late final List<Remainder> _remainders;
+final remainderListProvider =
+    StateNotifierProvider<RemainderController, List<Remainder>>(
+        (ref) => RemainderController([]));
 
-  List<Remainder> get remainders => _remainders;
+class RemainderController extends StateNotifier<List<Remainder>> {
+  RemainderController(super.state) {
+    initialize();
+  }
 
   Future initialize() async {
-    _isar = await Isar.open([RemainderSchema]);
-    _remainders = await _isar.remainders.where().findAll();
-    await NotificationService().init();
-    notifyListeners();
+    state = await IsarService().isar.remainders.where().findAll();
   }
 
   Future repeatNotification(BuildContext context, Remainder remainder) async {
@@ -43,8 +45,8 @@ class HomeController extends ChangeNotifier {
   }
 
   Future addRemainder(Remainder newRemainder) async {
-    await _isar.writeTxn(() async {
-      await _isar.remainders.put(newRemainder);
+    await IsarService().isar.writeTxn(() async {
+      await IsarService().isar.remainders.put(newRemainder);
     });
     if (newRemainder.scheduledDate != null) {
       await NotificationService().showScheduledNotification(
@@ -55,14 +57,13 @@ class HomeController extends ChangeNotifier {
         newRemainder,
       );
     }
-    _remainders.add(newRemainder);
-    notifyListeners();
+    state = [...state, newRemainder];
   }
 
   Future editRemainder(int id, Remainder newRemainder) async {
-    await _isar.writeTxn(() async {
+    await IsarService().isar.writeTxn(() async {
       newRemainder.id = id;
-      await _isar.remainders.put(newRemainder);
+      await IsarService().isar.remainders.put(newRemainder);
     });
     await NotificationService().cancelNotification(id);
     if (newRemainder.scheduledDate != null) {
@@ -74,20 +75,17 @@ class HomeController extends ChangeNotifier {
         newRemainder,
       );
     }
-    for (int i = 0; i < _remainders.length; i++) {
-      if (_remainders[i].id == id) {
-        _remainders[i] = newRemainder;
-      }
-    }
-    notifyListeners();
+    state = [
+      for (int i = 0; i < state.length; i++)
+        if (state[i].id == id) state[i] = newRemainder else state[i],
+    ];
   }
 
   Future deleteRemainder(Remainder remainder) async {
     await NotificationService().cancelNotification(remainder.id);
-    await _isar.writeTxn(() async {
-      await _isar.remainders.delete(remainder.id);
+    await IsarService().isar.writeTxn(() async {
+      await IsarService().isar.remainders.delete(remainder.id);
     });
-    remainders.remove(remainder);
-    notifyListeners();
+    state = state.where((element) => element.id != remainder.id).toList();
   }
 }

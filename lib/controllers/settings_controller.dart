@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recap/models/settings_data.dart';
 import 'package:recap/services/isar_service.dart';
 
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsData>(
-    (ref) => SettingsNotifier(
-        SettingsData(ThemeMode.system == ThemeMode.dark, true)));
+  (ref) => SettingsNotifier(
+    SettingsData(
+      SchedulerBinding.instance.window.platformBrightness == Brightness.dark,
+      true,
+    ),
+  ),
+);
 
 class SettingsNotifier extends StateNotifier<SettingsData> {
   SettingsNotifier(super.state) {

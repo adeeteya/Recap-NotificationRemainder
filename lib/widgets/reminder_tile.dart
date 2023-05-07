@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:recap/controllers/remainder_controller.dart';
-import 'package:recap/models/remainder.dart';
-import 'package:recap/screens/alert_form.dart';
+import 'package:recap/controllers/reminder_controller.dart';
+import 'package:recap/models/reminder.dart';
+import 'package:recap/screens/add_reminder.dart';
 
-class RemainderTile extends ConsumerWidget {
-  final Remainder remainder;
-  const RemainderTile({Key? key, required this.remainder}) : super(key: key);
+class ReminderTile extends ConsumerWidget {
+  final Reminder reminder;
+  const ReminderTile({Key? key, required this.reminder}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +33,7 @@ class RemainderTile extends ConsumerWidget {
                         begin: const Offset(1, 0),
                         end: Offset.zero,
                       ).animate(animation),
-                      child: AlertFormScreen(remainder: remainder),
+                      child: AddReminderScreen(reminder: reminder),
                     ),
                   ),
                 );
@@ -46,8 +46,8 @@ class RemainderTile extends ConsumerWidget {
               borderRadius: BorderRadius.circular(10),
               onPressed: (context) async {
                 await ref
-                    .read(remainderListProvider.notifier)
-                    .repeatNotification(context, remainder);
+                    .read(reminderListProvider.notifier)
+                    .repeatNotification(context, reminder);
               },
             ),
           ],
@@ -62,9 +62,31 @@ class RemainderTile extends ConsumerWidget {
               backgroundColor: Colors.red,
               borderRadius: BorderRadius.circular(10),
               onPressed: (context) async {
-                await ref
-                    .read(remainderListProvider.notifier)
-                    .deleteRemainder(remainder);
+                await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Delete Reminder"),
+                    content: const Text(
+                        "Are you sure you want to delete this reminder?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Cancel"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          ref
+                              .read(reminderListProvider.notifier)
+                              .deleteReminder(reminder)
+                              .then((value) => Navigator.pop(context));
+                        },
+                        style:
+                            TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text("Delete"),
+                      ),
+                    ],
+                  ),
+                );
               },
             )
           ],
@@ -82,7 +104,7 @@ class RemainderTile extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    remainder.title,
+                    reminder.title,
                     style: const TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 16,
@@ -92,7 +114,7 @@ class RemainderTile extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    remainder.content,
+                    reminder.content,
                     style: TextStyle(
                       color: ListTileTheme.of(context).textColor,
                       fontFamily: 'Poppins',
@@ -100,7 +122,7 @@ class RemainderTile extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  if (remainder.scheduledDate != null)
+                  if (reminder.scheduledDate != null)
                     Row(
                       children: [
                         Icon(
@@ -110,7 +132,7 @@ class RemainderTile extends ConsumerWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "${remainder.scheduledDate!.day}/${remainder.scheduledDate!.month}/${remainder.scheduledDate!.year}  ${remainder.scheduledDate!.hour}:${remainder.scheduledDate!.minute}",
+                          "${reminder.scheduledDate!.day}/${reminder.scheduledDate!.month}/${reminder.scheduledDate!.year}  ${reminder.scheduledDate!.hour}:${reminder.scheduledDate!.minute}",
                           style: TextStyle(
                             color: Colors.grey.shade700,
                             fontSize: 12,
@@ -119,7 +141,7 @@ class RemainderTile extends ConsumerWidget {
                         ),
                       ],
                     ),
-                  if (remainder.isPersistent)
+                  if (reminder.isPersistent)
                     Row(
                       children: [
                         Icon(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:recap/controllers/remainder_controller.dart';
+import 'package:recap/controllers/reminder_controller.dart';
 import 'package:recap/controllers/settings_controller.dart';
-import 'package:recap/screens/alert_form.dart';
+import 'package:recap/screens/add_reminder.dart';
 import 'package:recap/screens/settings_screen.dart';
-import 'package:recap/widgets/remainder_tile.dart';
+import 'package:recap/widgets/reminder_tile.dart';
 
 class Home extends ConsumerStatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -28,7 +28,7 @@ class _HomeState extends ConsumerState<Home> {
           builder: (context) => AlertDialog(
             title: const Text("Hints"),
             content: const Text(
-              "• Create a remainder by clicking on the add button on the bottom right\n• Slide a remainder tile left or right to view more options\n• You could edit, repeat or delete a notification\n• If Notifications don't appear then try granting permissions from the settings app",
+              "• Create a reminder by clicking on the add button on the bottom right\n• Slide a reminder tile left or right to view more options\n• You could edit, repeat or delete a notification\n• If Notifications don't appear then try granting permissions from the settings app",
             ),
             actions: [
               TextButton(
@@ -53,10 +53,10 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final remainderList = ref.watch(remainderListProvider);
+    final reminderList = ref.watch(reminderListProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notification Alerts"),
+        title: const Text("Notification Reminders"),
         actions: [
           IconButton(
             tooltip: "Settings",
@@ -80,7 +80,7 @@ class _HomeState extends ConsumerState<Home> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        tooltip: "Add Remainder",
+        tooltip: "Add Reminder",
         onPressed: () async {
           await Navigator.push(
             context,
@@ -90,20 +90,26 @@ class _HomeState extends ConsumerState<Home> {
                   begin: const Offset(1, 0),
                   end: Offset.zero,
                 ).animate(animation),
-                child: const AlertFormScreen(),
+                child: const AddReminderScreen(),
               ),
             ),
           );
         },
         child: const Icon(Icons.add),
       ),
-      body: (remainderList.isEmpty)
-          ? const Center(child: Text("No Remainders added yet"))
-          : ListView.builder(
-              itemCount: remainderList.length,
-              itemBuilder: (context, index) =>
-                  RemainderTile(remainder: remainderList[index]),
-            ),
+      body: reminderList.when(
+        error: (_, __) => const Center(child: Text("Some Error Occurred")),
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        data: (data) => (data.isEmpty)
+            ? const Center(child: Text("No Reminders added yet"))
+            : ListView.builder(
+                itemCount: data.length,
+                itemBuilder: (context, index) =>
+                    ReminderTile(reminder: data[index]),
+              ),
+      ),
     );
   }
 }

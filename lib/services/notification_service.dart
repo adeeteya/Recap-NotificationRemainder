@@ -1,5 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:recap/models/remainder.dart';
+import 'package:recap/models/reminder.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -24,8 +24,8 @@ class NotificationService {
     return NotificationDetails(
       android: AndroidNotificationDetails(
         'Recap',
-        'Notification Remainder',
-        channelDescription: "Notification Remainder for the user",
+        'Notification Reminder',
+        channelDescription: "Notification Reminder App",
         icon: 'ic_stat_circle_notifications',
         importance: importance,
         priority: Priority.max,
@@ -39,25 +39,23 @@ class NotificationService {
     );
   }
 
-  Future showNotification(Remainder remainder) async {
+  Future showNotification(Reminder reminder) async {
     await _localNotifications.show(
-      remainder.id,
-      remainder.title,
-      remainder.content,
-      notificationDetailsMaker(
-          remainder.isPersistent, Importance(remainder.importanceValue)),
+      reminder.id,
+      reminder.title,
+      reminder.content,
+      notificationDetailsMaker(reminder.isPersistent, reminder.importance),
     );
   }
 
-  Future showScheduledNotification(Remainder remainder) async {
+  Future showScheduledNotification(Reminder reminder) async {
     await _localNotifications.zonedSchedule(
-      remainder.id,
-      remainder.title,
-      remainder.content,
-      tz.TZDateTime.from(remainder.scheduledDate!, tz.local),
-      androidAllowWhileIdle: true,
-      notificationDetailsMaker(
-          remainder.isPersistent, Importance(remainder.importanceValue)),
+      reminder.id,
+      reminder.title,
+      reminder.content,
+      tz.TZDateTime.from(reminder.scheduledDate!, tz.local),
+      notificationDetailsMaker(reminder.isPersistent, reminder.importance),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.wallClockTime,
     );

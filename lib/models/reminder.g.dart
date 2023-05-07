@@ -1,31 +1,32 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'remainder.dart';
+part of 'reminder.dart';
 
 // **************************************************************************
 // IsarCollectionGenerator
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetRemainderCollection on Isar {
-  IsarCollection<Remainder> get remainders => this.collection();
+extension GetReminderCollection on Isar {
+  IsarCollection<Reminder> get reminders => this.collection();
 }
 
-const RemainderSchema = CollectionSchema(
-  name: r'Remainder',
-  id: 813434008639572630,
+const ReminderSchema = CollectionSchema(
+  name: r'Reminder',
+  id: -8566764253612256045,
   properties: {
     r'content': PropertySchema(
       id: 0,
       name: r'content',
       type: IsarType.string,
     ),
-    r'importanceValue': PropertySchema(
+    r'importance': PropertySchema(
       id: 1,
-      name: r'importanceValue',
-      type: IsarType.long,
+      name: r'importance',
+      type: IsarType.byte,
+      enumMap: _ReminderimportanceEnumValueMap,
     ),
     r'isPersistent': PropertySchema(
       id: 2,
@@ -43,22 +44,22 @@ const RemainderSchema = CollectionSchema(
       type: IsarType.string,
     )
   },
-  estimateSize: _remainderEstimateSize,
-  serialize: _remainderSerialize,
-  deserialize: _remainderDeserialize,
-  deserializeProp: _remainderDeserializeProp,
+  estimateSize: _reminderEstimateSize,
+  serialize: _reminderSerialize,
+  deserialize: _reminderDeserialize,
+  deserializeProp: _reminderDeserializeProp,
   idName: r'id',
   indexes: {},
   links: {},
   embeddedSchemas: {},
-  getId: _remainderGetId,
-  getLinks: _remainderGetLinks,
-  attach: _remainderAttach,
-  version: '3.0.5',
+  getId: _reminderGetId,
+  getLinks: _reminderGetLinks,
+  attach: _reminderAttach,
+  version: '3.1.0+1',
 );
 
-int _remainderEstimateSize(
-  Remainder object,
+int _reminderEstimateSize(
+  Reminder object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -68,37 +69,38 @@ int _remainderEstimateSize(
   return bytesCount;
 }
 
-void _remainderSerialize(
-  Remainder object,
+void _reminderSerialize(
+  Reminder object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.content);
-  writer.writeLong(offsets[1], object.importanceValue);
+  writer.writeByte(offsets[1], object.importance.index);
   writer.writeBool(offsets[2], object.isPersistent);
   writer.writeDateTime(offsets[3], object.scheduledDate);
   writer.writeString(offsets[4], object.title);
 }
 
-Remainder _remainderDeserialize(
+Reminder _reminderDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = Remainder(
+  final object = Reminder(
     reader.readString(offsets[4]),
     reader.readString(offsets[0]),
     reader.readBool(offsets[2]),
-    reader.readLong(offsets[1]),
+    _ReminderimportanceValueEnumMap[reader.readByteOrNull(offsets[1])] ??
+        Importance.unspecified,
     reader.readDateTimeOrNull(offsets[3]),
   );
   object.id = id;
   return object;
 }
 
-P _remainderDeserializeProp<P>(
+P _reminderDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -108,7 +110,8 @@ P _remainderDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
+      return (_ReminderimportanceValueEnumMap[reader.readByteOrNull(offset)] ??
+          Importance.unspecified) as P;
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
@@ -120,30 +123,47 @@ P _remainderDeserializeProp<P>(
   }
 }
 
-Id _remainderGetId(Remainder object) {
+const _ReminderimportanceEnumValueMap = {
+  'unspecified': 0,
+  'none': 1,
+  'min': 2,
+  'low': 3,
+  'defaultImportance': 4,
+  'high': 5,
+  'max': 6,
+};
+const _ReminderimportanceValueEnumMap = {
+  0: Importance.unspecified,
+  1: Importance.none,
+  2: Importance.min,
+  3: Importance.low,
+  4: Importance.defaultImportance,
+  5: Importance.high,
+  6: Importance.max,
+};
+
+Id _reminderGetId(Reminder object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _remainderGetLinks(Remainder object) {
+List<IsarLinkBase<dynamic>> _reminderGetLinks(Reminder object) {
   return [];
 }
 
-void _remainderAttach(IsarCollection<dynamic> col, Id id, Remainder object) {
+void _reminderAttach(IsarCollection<dynamic> col, Id id, Reminder object) {
   object.id = id;
 }
 
-extension RemainderQueryWhereSort
-    on QueryBuilder<Remainder, Remainder, QWhere> {
-  QueryBuilder<Remainder, Remainder, QAfterWhere> anyId() {
+extension ReminderQueryWhereSort on QueryBuilder<Reminder, Reminder, QWhere> {
+  QueryBuilder<Reminder, Reminder, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 }
 
-extension RemainderQueryWhere
-    on QueryBuilder<Remainder, Remainder, QWhereClause> {
-  QueryBuilder<Remainder, Remainder, QAfterWhereClause> idEqualTo(Id id) {
+extension ReminderQueryWhere on QueryBuilder<Reminder, Reminder, QWhereClause> {
+  QueryBuilder<Reminder, Reminder, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -152,7 +172,7 @@ extension RemainderQueryWhere
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<Reminder, Reminder, QAfterWhereClause> idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -174,7 +194,7 @@ extension RemainderQueryWhere
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<Reminder, Reminder, QAfterWhereClause> idGreaterThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -183,7 +203,7 @@ extension RemainderQueryWhere
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<Reminder, Reminder, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -192,7 +212,7 @@ extension RemainderQueryWhere
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterWhereClause> idBetween(
+  QueryBuilder<Reminder, Reminder, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -209,9 +229,9 @@ extension RemainderQueryWhere
   }
 }
 
-extension RemainderQueryFilter
-    on QueryBuilder<Remainder, Remainder, QFilterCondition> {
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentEqualTo(
+extension ReminderQueryFilter
+    on QueryBuilder<Reminder, Reminder, QFilterCondition> {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -224,7 +244,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentGreaterThan(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -239,7 +259,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentLessThan(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -254,7 +274,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentBetween(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -273,7 +293,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentStartsWith(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -286,7 +306,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentEndsWith(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -299,7 +319,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentContains(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -311,7 +331,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentMatches(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -323,7 +343,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> contentIsEmpty() {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'content',
@@ -332,8 +352,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
-      contentIsNotEmpty() {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> contentIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'content',
@@ -342,8 +361,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> idEqualTo(
-      Id value) {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -352,7 +370,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -365,7 +383,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> idLessThan(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -378,7 +396,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> idBetween(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -395,54 +413,51 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
-      importanceValueEqualTo(int value) {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> importanceEqualTo(
+      Importance value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importanceValue',
+        property: r'importance',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
-      importanceValueGreaterThan(
-    int value, {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> importanceGreaterThan(
+    Importance value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'importanceValue',
+        property: r'importance',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
-      importanceValueLessThan(
-    int value, {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> importanceLessThan(
+    Importance value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'importanceValue',
+        property: r'importance',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
-      importanceValueBetween(
-    int lower,
-    int upper, {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> importanceBetween(
+    Importance lower,
+    Importance upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'importanceValue',
+        property: r'importance',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -451,7 +466,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> isPersistentEqualTo(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> isPersistentEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -461,7 +476,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
       scheduledDateIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -470,7 +485,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
       scheduledDateIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
@@ -479,8 +494,8 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
-      scheduledDateEqualTo(DateTime? value) {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> scheduledDateEqualTo(
+      DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'scheduledDate',
@@ -489,7 +504,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
       scheduledDateGreaterThan(
     DateTime? value, {
     bool include = false,
@@ -503,8 +518,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
-      scheduledDateLessThan(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> scheduledDateLessThan(
     DateTime? value, {
     bool include = false,
   }) {
@@ -517,8 +531,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition>
-      scheduledDateBetween(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> scheduledDateBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
@@ -535,7 +548,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleEqualTo(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -548,7 +561,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleGreaterThan(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -563,7 +576,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleLessThan(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -578,7 +591,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleBetween(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -597,7 +610,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleStartsWith(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -610,7 +623,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleEndsWith(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -623,7 +636,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleContains(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -635,7 +648,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleMatches(
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -647,7 +660,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleIsEmpty() {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'title',
@@ -656,7 +669,7 @@ extension RemainderQueryFilter
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterFilterCondition> titleIsNotEmpty() {
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> titleIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'title',
@@ -666,177 +679,177 @@ extension RemainderQueryFilter
   }
 }
 
-extension RemainderQueryObject
-    on QueryBuilder<Remainder, Remainder, QFilterCondition> {}
+extension ReminderQueryObject
+    on QueryBuilder<Reminder, Reminder, QFilterCondition> {}
 
-extension RemainderQueryLinks
-    on QueryBuilder<Remainder, Remainder, QFilterCondition> {}
+extension ReminderQueryLinks
+    on QueryBuilder<Reminder, Reminder, QFilterCondition> {}
 
-extension RemainderQuerySortBy on QueryBuilder<Remainder, Remainder, QSortBy> {
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByContent() {
+extension ReminderQuerySortBy on QueryBuilder<Reminder, Reminder, QSortBy> {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByContent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByContentDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByContentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByImportanceValue() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByImportance() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'importanceValue', Sort.asc);
+      return query.addSortBy(r'importance', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByImportanceValueDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByImportanceDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'importanceValue', Sort.desc);
+      return query.addSortBy(r'importance', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByIsPersistent() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByIsPersistent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isPersistent', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByIsPersistentDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByIsPersistentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isPersistent', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByScheduledDate() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByScheduledDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduledDate', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByScheduledDateDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByScheduledDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduledDate', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByTitle() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> sortByTitleDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
     });
   }
 }
 
-extension RemainderQuerySortThenBy
-    on QueryBuilder<Remainder, Remainder, QSortThenBy> {
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByContent() {
+extension ReminderQuerySortThenBy
+    on QueryBuilder<Reminder, Reminder, QSortThenBy> {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByContent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByContentDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByContentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenById() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByImportanceValue() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByImportance() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'importanceValue', Sort.asc);
+      return query.addSortBy(r'importance', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByImportanceValueDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByImportanceDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'importanceValue', Sort.desc);
+      return query.addSortBy(r'importance', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByIsPersistent() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByIsPersistent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isPersistent', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByIsPersistentDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByIsPersistentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isPersistent', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByScheduledDate() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByScheduledDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduledDate', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByScheduledDateDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByScheduledDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduledDate', Sort.desc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByTitle() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QAfterSortBy> thenByTitleDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
     });
   }
 }
 
-extension RemainderQueryWhereDistinct
-    on QueryBuilder<Remainder, Remainder, QDistinct> {
-  QueryBuilder<Remainder, Remainder, QDistinct> distinctByContent(
+extension ReminderQueryWhereDistinct
+    on QueryBuilder<Reminder, Reminder, QDistinct> {
+  QueryBuilder<Reminder, Reminder, QDistinct> distinctByContent(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'content', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QDistinct> distinctByImportanceValue() {
+  QueryBuilder<Reminder, Reminder, QDistinct> distinctByImportance() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'importanceValue');
+      return query.addDistinctBy(r'importance');
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QDistinct> distinctByIsPersistent() {
+  QueryBuilder<Reminder, Reminder, QDistinct> distinctByIsPersistent() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isPersistent');
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QDistinct> distinctByScheduledDate() {
+  QueryBuilder<Reminder, Reminder, QDistinct> distinctByScheduledDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'scheduledDate');
     });
   }
 
-  QueryBuilder<Remainder, Remainder, QDistinct> distinctByTitle(
+  QueryBuilder<Reminder, Reminder, QDistinct> distinctByTitle(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
@@ -844,39 +857,39 @@ extension RemainderQueryWhereDistinct
   }
 }
 
-extension RemainderQueryProperty
-    on QueryBuilder<Remainder, Remainder, QQueryProperty> {
-  QueryBuilder<Remainder, int, QQueryOperations> idProperty() {
+extension ReminderQueryProperty
+    on QueryBuilder<Reminder, Reminder, QQueryProperty> {
+  QueryBuilder<Reminder, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<Remainder, String, QQueryOperations> contentProperty() {
+  QueryBuilder<Reminder, String, QQueryOperations> contentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'content');
     });
   }
 
-  QueryBuilder<Remainder, int, QQueryOperations> importanceValueProperty() {
+  QueryBuilder<Reminder, Importance, QQueryOperations> importanceProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'importanceValue');
+      return query.addPropertyName(r'importance');
     });
   }
 
-  QueryBuilder<Remainder, bool, QQueryOperations> isPersistentProperty() {
+  QueryBuilder<Reminder, bool, QQueryOperations> isPersistentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isPersistent');
     });
   }
 
-  QueryBuilder<Remainder, DateTime?, QQueryOperations> scheduledDateProperty() {
+  QueryBuilder<Reminder, DateTime?, QQueryOperations> scheduledDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scheduledDate');
     });
   }
 
-  QueryBuilder<Remainder, String, QQueryOperations> titleProperty() {
+  QueryBuilder<Reminder, String, QQueryOperations> titleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'title');
     });

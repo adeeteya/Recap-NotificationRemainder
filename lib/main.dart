@@ -35,7 +35,7 @@ class RecapApp extends ConsumerWidget {
       themeMode: settingsData.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: Colors.indigo,
+        colorSchemeSeed: Color(settingsData.colorValue),
         fontFamily: 'Poppins',
         appBarTheme: const AppBarTheme(
           centerTitle: true,
@@ -48,7 +48,7 @@ class RecapApp extends ConsumerWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo,
+            backgroundColor: Colors.amber,
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 60),
             shape: RoundedRectangleBorder(
@@ -88,12 +88,11 @@ class RecapApp extends ConsumerWidget {
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        colorSchemeSeed: Colors.indigo,
+        colorSchemeSeed: Color(settingsData.colorValue),
         fontFamily: 'Poppins',
         appBarTheme: const AppBarTheme(
           centerTitle: true,
           titleTextStyle: TextStyle(
-            color: Colors.white,
             fontFamily: 'Poppins',
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -101,7 +100,7 @@ class RecapApp extends ConsumerWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo,
+            backgroundColor: Colors.amber,
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 60),
             shape: RoundedRectangleBorder(

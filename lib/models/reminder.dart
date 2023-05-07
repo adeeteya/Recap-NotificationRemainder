@@ -1,31 +1,33 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:isar/isar.dart';
-
-part 'remainder.g.dart';
+part 'reminder.g.dart';
 
 @collection
-class Remainder {
+class Reminder {
   Id id = Isar.autoIncrement;
 
   final String title;
   final String content;
   final bool isPersistent;
-  final int importanceValue;
   final DateTime? scheduledDate;
 
-  Remainder(this.title, this.content, this.isPersistent, this.importanceValue,
+  @enumerated
+  final Importance importance;
+
+  Reminder(this.title, this.content, this.isPersistent, this.importance,
       this.scheduledDate);
 
-  Remainder copyWith(
+  Reminder copyWith(
       {String? title,
       String? content,
       bool? isPersistent,
-      int? importanceValue,
+      Importance? importance,
       DateTime? scheduledDate}) {
-    return Remainder(
+    return Reminder(
         title ?? this.title,
         content ?? this.content,
         isPersistent ?? this.isPersistent,
-        importanceValue ?? this.importanceValue,
+        importance ?? this.importance,
         scheduledDate);
   }
 }

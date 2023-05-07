@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:recap/controllers/remainder_controller.dart';
-import 'package:recap/models/remainder.dart';
+import 'package:recap/controllers/reminder_controller.dart';
+import 'package:recap/models/reminder.dart';
 
-class AlertFormScreen extends ConsumerStatefulWidget {
-  final Remainder? remainder;
-  const AlertFormScreen({
+class AddReminderScreen extends ConsumerStatefulWidget {
+  final Reminder? reminder;
+  const AddReminderScreen({
     Key? key,
-    this.remainder,
+    this.reminder,
   }) : super(key: key);
 
   @override
   ConsumerState createState() => _AlertFormScreenState();
 }
 
-class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
+class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleTextEditingController;
   late final TextEditingController _contentTextEditingController;
@@ -26,20 +26,20 @@ class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
 
   @override
   void initState() {
-    if (widget.remainder != null) {
+    if (widget.reminder != null) {
       _titleTextEditingController =
-          TextEditingController(text: widget.remainder!.title);
+          TextEditingController(text: widget.reminder!.title);
       _contentTextEditingController =
-          TextEditingController(text: widget.remainder!.content);
-      scheduledDateTime = widget.remainder?.scheduledDate;
+          TextEditingController(text: widget.reminder!.content);
+      scheduledDateTime = widget.reminder?.scheduledDate;
       _dateTextEditingController =
-          TextEditingController(text: scheduledDateTime.toString());
-      selectedImportance = Importance(widget.remainder!.importanceValue);
-      isPersistent = widget.remainder!.isPersistent;
+          TextEditingController(text: scheduledDateTime?.toString() ?? '');
+      selectedImportance = widget.reminder!.importance;
+      isPersistent = widget.reminder!.isPersistent;
     } else {
       _titleTextEditingController = TextEditingController();
       _contentTextEditingController = TextEditingController();
-      _dateTextEditingController = TextEditingController();
+      _dateTextEditingController = TextEditingController(text: "None");
     }
     super.initState();
   }
@@ -50,6 +50,12 @@ class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
     _contentTextEditingController.dispose();
     _dateTextEditingController.dispose();
     super.dispose();
+  }
+
+  String timeAndDateInString() {
+    int hour = scheduledDateTime?.hour ?? 0;
+    int minute = scheduledDateTime?.minute ?? 0;
+    return "${hour > 12 ? hour - 12 : hour}:${minute > 9 ? minute : "0$minute"} ${(hour > 12) ? "PM" : "AM"} - ${scheduledDateTime?.day}/${scheduledDateTime?.month}/${scheduledDateTime?.year}";
   }
 
   Future pickDateAndTime() async {
@@ -71,7 +77,7 @@ class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(const Duration(days: 365)),
+        lastDate: DateTime.now().add(const Duration(days: 1825)),
         helpText: "Select Date",
         cancelText: "None",
         confirmText: "Schedule",
@@ -87,38 +93,37 @@ class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
           dateTime.add(Duration(hours: value.hour, minutes: value.minute));
       setState(() {
         scheduledDateTime = dateTime;
-        _dateTextEditingController.text =
-            "${scheduledDateTime?.day}/${scheduledDateTime?.month}/${scheduledDateTime?.year}  ${scheduledDateTime?.hour}:${scheduledDateTime?.minute}";
+        _dateTextEditingController.text = timeAndDateInString();
       });
       return null;
     });
   }
 
-  Future insertRemainder() async {
+  Future insertReminder() async {
     if (_formKey.currentState!.validate()) {
-      if (widget.remainder != null) {
-        Remainder newRemainder = Remainder(
+      if (widget.reminder != null) {
+        Reminder newReminder = Reminder(
           _titleTextEditingController.text,
           _contentTextEditingController.text,
           isPersistent,
-          selectedImportance.value,
+          selectedImportance,
           scheduledDateTime,
         );
         await ref
-            .read(remainderListProvider.notifier)
-            .editRemainder(widget.remainder!.id, newRemainder)
+            .read(reminderListProvider.notifier)
+            .editReminder(widget.reminder!.id, newReminder)
             .then((value) => Navigator.pop(context));
       } else {
-        Remainder newRemainder = Remainder(
+        Reminder newReminder = Reminder(
           _titleTextEditingController.text,
           _contentTextEditingController.text,
           isPersistent,
-          selectedImportance.value,
+          selectedImportance,
           scheduledDateTime,
         );
         await ref
-            .read(remainderListProvider.notifier)
-            .addRemainder(newRemainder)
+            .read(reminderListProvider.notifier)
+            .addReminder(newReminder)
             .then((value) => Navigator.pop(context));
       }
     }
@@ -130,7 +135,7 @@ class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: (widget.remainder != null)
+          title: (widget.reminder != null)
               ? const Text("Edit Alert")
               : const Text("Create Alert"),
         ),
@@ -274,7 +279,7 @@ class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
                 CheckboxListTile(
                   value: isPersistent,
                   checkColor: Colors.white,
-                  activeColor: Colors.indigo,
+                  activeColor: Colors.amber,
                   contentPadding: EdgeInsets.zero,
                   controlAffinity: ListTileControlAffinity.leading,
                   shape: RoundedRectangleBorder(
@@ -294,10 +299,10 @@ class _AlertFormScreenState extends ConsumerState<AlertFormScreen> {
                 ),
                 const SizedBox(height: 25),
                 ElevatedButton(
-                  onPressed: insertRemainder,
-                  child: (widget.remainder != null)
-                      ? const Text("Edit Remainder")
-                      : const Text("Create Remainder"),
+                  onPressed: insertReminder,
+                  child: (widget.reminder != null)
+                      ? const Text("Edit Reminder")
+                      : const Text("Create Reminder"),
                 ),
               ],
             ),

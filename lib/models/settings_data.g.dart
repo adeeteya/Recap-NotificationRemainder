@@ -7,7 +7,7 @@ part of 'settings_data.dart';
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
 extension GetSettingsDataCollection on Isar {
   IsarCollection<SettingsData> get settingsDatas => this.collection();
@@ -17,13 +17,18 @@ const SettingsDataSchema = CollectionSchema(
   name: r'SettingsData',
   id: -966610349317306745,
   properties: {
-    r'isDarkTheme': PropertySchema(
+    r'colorValue': PropertySchema(
       id: 0,
+      name: r'colorValue',
+      type: IsarType.long,
+    ),
+    r'isDarkTheme': PropertySchema(
+      id: 1,
       name: r'isDarkTheme',
       type: IsarType.bool,
     ),
     r'showInitialHint': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'showInitialHint',
       type: IsarType.bool,
     )
@@ -39,7 +44,7 @@ const SettingsDataSchema = CollectionSchema(
   getId: _settingsDataGetId,
   getLinks: _settingsDataGetLinks,
   attach: _settingsDataAttach,
-  version: '3.0.5',
+  version: '3.1.0+1',
 );
 
 int _settingsDataEstimateSize(
@@ -57,8 +62,9 @@ void _settingsDataSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.isDarkTheme);
-  writer.writeBool(offsets[1], object.showInitialHint);
+  writer.writeLong(offsets[0], object.colorValue);
+  writer.writeBool(offsets[1], object.isDarkTheme);
+  writer.writeBool(offsets[2], object.showInitialHint);
 }
 
 SettingsData _settingsDataDeserialize(
@@ -68,8 +74,9 @@ SettingsData _settingsDataDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SettingsData(
-    reader.readBool(offsets[0]),
     reader.readBool(offsets[1]),
+    reader.readBool(offsets[2]),
+    reader.readLong(offsets[0]),
   );
   object.id = id;
   return object;
@@ -83,8 +90,10 @@ P _settingsDataDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readBool(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 1:
+      return (reader.readBool(offset)) as P;
+    case 2:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -185,6 +194,62 @@ extension SettingsDataQueryWhere
 
 extension SettingsDataQueryFilter
     on QueryBuilder<SettingsData, SettingsData, QFilterCondition> {
+  QueryBuilder<SettingsData, SettingsData, QAfterFilterCondition>
+      colorValueEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'colorValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SettingsData, SettingsData, QAfterFilterCondition>
+      colorValueGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'colorValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SettingsData, SettingsData, QAfterFilterCondition>
+      colorValueLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'colorValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SettingsData, SettingsData, QAfterFilterCondition>
+      colorValueBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'colorValue',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<SettingsData, SettingsData, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -267,6 +332,19 @@ extension SettingsDataQueryLinks
 
 extension SettingsDataQuerySortBy
     on QueryBuilder<SettingsData, SettingsData, QSortBy> {
+  QueryBuilder<SettingsData, SettingsData, QAfterSortBy> sortByColorValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'colorValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SettingsData, SettingsData, QAfterSortBy>
+      sortByColorValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'colorValue', Sort.desc);
+    });
+  }
+
   QueryBuilder<SettingsData, SettingsData, QAfterSortBy> sortByIsDarkTheme() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDarkTheme', Sort.asc);
@@ -297,6 +375,19 @@ extension SettingsDataQuerySortBy
 
 extension SettingsDataQuerySortThenBy
     on QueryBuilder<SettingsData, SettingsData, QSortThenBy> {
+  QueryBuilder<SettingsData, SettingsData, QAfterSortBy> thenByColorValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'colorValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SettingsData, SettingsData, QAfterSortBy>
+      thenByColorValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'colorValue', Sort.desc);
+    });
+  }
+
   QueryBuilder<SettingsData, SettingsData, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -339,6 +430,12 @@ extension SettingsDataQuerySortThenBy
 
 extension SettingsDataQueryWhereDistinct
     on QueryBuilder<SettingsData, SettingsData, QDistinct> {
+  QueryBuilder<SettingsData, SettingsData, QDistinct> distinctByColorValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'colorValue');
+    });
+  }
+
   QueryBuilder<SettingsData, SettingsData, QDistinct> distinctByIsDarkTheme() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDarkTheme');
@@ -358,6 +455,12 @@ extension SettingsDataQueryProperty
   QueryBuilder<SettingsData, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<SettingsData, int, QQueryOperations> colorValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'colorValue');
     });
   }
 

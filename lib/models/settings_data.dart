@@ -8,10 +8,12 @@ class SettingsData {
 
   bool isDarkTheme;
   bool showInitialHint;
+  int colorValue;
 
-  SettingsData(this.isDarkTheme, this.showInitialHint);
-  SettingsData copyWith({bool? isDarkTheme, bool? showInitialHint}) {
+  SettingsData(this.isDarkTheme, this.showInitialHint, this.colorValue);
+  SettingsData copyWith(
+      {bool? isDarkTheme, bool? showInitialHint, int? colorValue}) {
     return SettingsData(isDarkTheme ?? this.isDarkTheme,
-        showInitialHint ?? this.showInitialHint);
+        showInitialHint ?? this.showInitialHint, colorValue ?? this.colorValue);
   }
 }

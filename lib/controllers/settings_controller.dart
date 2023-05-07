@@ -48,4 +48,11 @@ class SettingsNotifier extends Notifier<SettingsData> {
       await IsarService().isar.settingsDatas.put(state);
     });
   }
+
+  Future changeThemeColor(int newColorValue) async {
+    state = state.copyWith(colorValue: newColorValue);
+    await IsarService().isar.writeTxn(() async {
+      await IsarService().isar.settingsDatas.put(state);
+    });
+  }
 }

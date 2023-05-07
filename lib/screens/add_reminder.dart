@@ -279,7 +279,6 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                 CheckboxListTile(
                   value: isPersistent,
                   checkColor: Colors.white,
-                  activeColor: Colors.amber,
                   contentPadding: EdgeInsets.zero,
                   controlAffinity: ListTileControlAffinity.leading,
                   shape: RoundedRectangleBorder(

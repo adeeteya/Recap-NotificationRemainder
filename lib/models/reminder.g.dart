@@ -22,24 +22,29 @@ const ReminderSchema = CollectionSchema(
       name: r'content',
       type: IsarType.string,
     ),
-    r'importance': PropertySchema(
+    r'encodedImageBytes': PropertySchema(
       id: 1,
+      name: r'encodedImageBytes',
+      type: IsarType.string,
+    ),
+    r'importance': PropertySchema(
+      id: 2,
       name: r'importance',
       type: IsarType.byte,
       enumMap: _ReminderimportanceEnumValueMap,
     ),
     r'isPersistent': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'isPersistent',
       type: IsarType.bool,
     ),
     r'scheduledDate': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'scheduledDate',
       type: IsarType.dateTime,
     ),
     r'title': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'title',
       type: IsarType.string,
     )
@@ -65,6 +70,7 @@ int _reminderEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.content.length * 3;
+  bytesCount += 3 + object.encodedImageBytes.length * 3;
   bytesCount += 3 + object.title.length * 3;
   return bytesCount;
 }
@@ -76,10 +82,11 @@ void _reminderSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.content);
-  writer.writeByte(offsets[1], object.importance.index);
-  writer.writeBool(offsets[2], object.isPersistent);
-  writer.writeDateTime(offsets[3], object.scheduledDate);
-  writer.writeString(offsets[4], object.title);
+  writer.writeString(offsets[1], object.encodedImageBytes);
+  writer.writeByte(offsets[2], object.importance.index);
+  writer.writeBool(offsets[3], object.isPersistent);
+  writer.writeDateTime(offsets[4], object.scheduledDate);
+  writer.writeString(offsets[5], object.title);
 }
 
 Reminder _reminderDeserialize(
@@ -89,12 +96,13 @@ Reminder _reminderDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Reminder(
-    reader.readString(offsets[4]),
+    reader.readString(offsets[5]),
     reader.readString(offsets[0]),
-    reader.readBool(offsets[2]),
-    _ReminderimportanceValueEnumMap[reader.readByteOrNull(offsets[1])] ??
+    reader.readBool(offsets[3]),
+    reader.readDateTimeOrNull(offsets[4]),
+    reader.readString(offsets[1]),
+    _ReminderimportanceValueEnumMap[reader.readByteOrNull(offsets[2])] ??
         Importance.unspecified,
-    reader.readDateTimeOrNull(offsets[3]),
   );
   object.id = id;
   return object;
@@ -110,13 +118,15 @@ P _reminderDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
       return (_ReminderimportanceValueEnumMap[reader.readByteOrNull(offset)] ??
           Importance.unspecified) as P;
-    case 2:
-      return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 5:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -356,6 +366,142 @@ extension ReminderQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'content',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'encodedImageBytes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'encodedImageBytes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'encodedImageBytes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'encodedImageBytes',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'encodedImageBytes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'encodedImageBytes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'encodedImageBytes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'encodedImageBytes',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'encodedImageBytes',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      encodedImageBytesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'encodedImageBytes',
         value: '',
       ));
     });
@@ -698,6 +844,18 @@ extension ReminderQuerySortBy on QueryBuilder<Reminder, Reminder, QSortBy> {
     });
   }
 
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByEncodedImageBytes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'encodedImageBytes', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByEncodedImageBytesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'encodedImageBytes', Sort.desc);
+    });
+  }
+
   QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByImportance() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importance', Sort.asc);
@@ -758,6 +916,18 @@ extension ReminderQuerySortThenBy
   QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByContentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByEncodedImageBytes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'encodedImageBytes', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByEncodedImageBytesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'encodedImageBytes', Sort.desc);
     });
   }
 
@@ -831,6 +1001,14 @@ extension ReminderQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Reminder, Reminder, QDistinct> distinctByEncodedImageBytes(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'encodedImageBytes',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Reminder, Reminder, QDistinct> distinctByImportance() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importance');
@@ -868,6 +1046,12 @@ extension ReminderQueryProperty
   QueryBuilder<Reminder, String, QQueryOperations> contentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'content');
+    });
+  }
+
+  QueryBuilder<Reminder, String, QQueryOperations> encodedImageBytesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'encodedImageBytes');
     });
   }
 

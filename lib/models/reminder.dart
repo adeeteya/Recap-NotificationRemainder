@@ -10,24 +10,35 @@ class Reminder {
   final String content;
   final bool isPersistent;
   final DateTime? scheduledDate;
+  final String encodedImageBytes;
 
   @enumerated
   final Importance importance;
 
-  Reminder(this.title, this.content, this.isPersistent, this.importance,
-      this.scheduledDate);
+  Reminder(this.title, this.content, this.isPersistent, this.scheduledDate,
+      this.encodedImageBytes, this.importance);
 
-  Reminder copyWith(
-      {String? title,
-      String? content,
-      bool? isPersistent,
-      Importance? importance,
-      DateTime? scheduledDate}) {
+  Reminder copyWith({
+    String? title,
+    String? content,
+    bool? isPersistent,
+    DateTime? scheduledDate,
+    String? encodedImageBytes,
+    Importance? importance,
+  }) {
     return Reminder(
-        title ?? this.title,
-        content ?? this.content,
-        isPersistent ?? this.isPersistent,
-        importance ?? this.importance,
-        scheduledDate);
+      title ?? this.title,
+      content ?? this.content,
+      isPersistent ?? this.isPersistent,
+      scheduledDate,
+      encodedImageBytes ?? this.encodedImageBytes,
+      importance ?? this.importance,
+    );
+  }
+
+  String timeAndDateInString() {
+    int hour = scheduledDate?.hour ?? 0;
+    int minute = scheduledDate?.minute ?? 0;
+    return "${hour > 12 ? hour - 12 : hour}:${minute > 9 ? minute : "0$minute"} ${(hour > 12) ? "PM" : "AM"} - ${scheduledDate?.day}/${scheduledDate?.month}/${scheduledDate?.year}";
   }
 }

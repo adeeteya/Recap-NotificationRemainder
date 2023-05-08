@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:recap/controllers/reminder_controller.dart';
 import 'package:recap/models/reminder.dart';
 
@@ -23,6 +25,7 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
   Importance selectedImportance = Importance.defaultImportance;
   bool isPersistent = false;
   DateTime? scheduledDateTime;
+  String encodedImageBytes = '';
 
   @override
   void initState() {
@@ -33,9 +36,10 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
           TextEditingController(text: widget.reminder!.content);
       scheduledDateTime = widget.reminder?.scheduledDate;
       _dateTextEditingController =
-          TextEditingController(text: scheduledDateTime?.toString() ?? '');
+          TextEditingController(text: widget.reminder!.timeAndDateInString());
       selectedImportance = widget.reminder!.importance;
       isPersistent = widget.reminder!.isPersistent;
+      encodedImageBytes = widget.reminder!.encodedImageBytes;
     } else {
       _titleTextEditingController = TextEditingController();
       _contentTextEditingController = TextEditingController();
@@ -103,11 +107,12 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
     if (_formKey.currentState!.validate()) {
       if (widget.reminder != null) {
         Reminder newReminder = Reminder(
-          _titleTextEditingController.text,
-          _contentTextEditingController.text,
+          _titleTextEditingController.text.trim(),
+          _contentTextEditingController.text.trim(),
           isPersistent,
-          selectedImportance,
           scheduledDateTime,
+          encodedImageBytes,
+          selectedImportance,
         );
         await ref
             .read(reminderListProvider.notifier)
@@ -115,11 +120,12 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
             .then((value) => Navigator.pop(context));
       } else {
         Reminder newReminder = Reminder(
-          _titleTextEditingController.text,
-          _contentTextEditingController.text,
+          _titleTextEditingController.text.trim(),
+          _contentTextEditingController.text.trim(),
           isPersistent,
-          selectedImportance,
           scheduledDateTime,
+          encodedImageBytes,
+          selectedImportance,
         );
         await ref
             .read(reminderListProvider.notifier)
@@ -147,6 +153,122 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        final XFile? imageFile = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
+                        encodedImageBytes =
+                            base64.encode(await imageFile?.readAsBytes() ?? []);
+                        setState(() {});
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Ink(
+                        height: 150,
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: (encodedImageBytes.isNotEmpty)
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.memory(
+                                  base64.decode(encodedImageBytes),
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : const Center(
+                                child: Text(
+                                  "Image\n(optional)",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Importance",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButtonFormField<Importance>(
+                              value: selectedImportance,
+                              isDense: false,
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: 5,
+                                ),
+                              ),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: Importance.none,
+                                  child: Text("None"),
+                                ),
+                                DropdownMenuItem(
+                                  value: Importance.low,
+                                  child: Text("Low"),
+                                ),
+                                DropdownMenuItem(
+                                  value: Importance.min,
+                                  child: Text("Min"),
+                                ),
+                                DropdownMenuItem(
+                                  value: Importance.defaultImportance,
+                                  child: Text("Default"),
+                                ),
+                                DropdownMenuItem(
+                                  value: Importance.high,
+                                  child: Text("High"),
+                                ),
+                                DropdownMenuItem(
+                                  value: Importance.max,
+                                  child: Text("Max"),
+                                ),
+                              ],
+                              onChanged: (val) {
+                                selectedImportance = val ?? selectedImportance;
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          CheckboxListTile(
+                            value: isPersistent,
+                            checkColor: Colors.white,
+                            contentPadding: EdgeInsets.zero,
+                            controlAffinity: ListTileControlAffinity.leading,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            checkboxShape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            title: const Text(
+                              "Persistent",
+                            ),
+                            onChanged: (val) {
+                              setState(() {
+                                isPersistent = val ?? isPersistent;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
                 const Text(
                   "Title",
                   style: TextStyle(
@@ -183,8 +305,8 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                 const SizedBox(height: 5),
                 TextFormField(
                   controller: _contentTextEditingController,
-                  minLines: 2,
-                  maxLines: 5,
+                  minLines: 3,
+                  maxLines: 6,
                   decoration: const InputDecoration(hintText: "Content"),
                   validator: (val) {
                     if (val?.isEmpty ?? true) return "Please enter the content";
@@ -194,57 +316,6 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                     fontFamily: 'Poppins',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  "Importance",
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButtonFormField<Importance>(
-                    value: selectedImportance,
-                    isDense: false,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 5,
-                      ),
-                    ),
-                    items: const [
-                      DropdownMenuItem(
-                        value: Importance.none,
-                        child: Text("None"),
-                      ),
-                      DropdownMenuItem(
-                        value: Importance.low,
-                        child: Text("Low"),
-                      ),
-                      DropdownMenuItem(
-                        value: Importance.min,
-                        child: Text("Min"),
-                      ),
-                      DropdownMenuItem(
-                        value: Importance.defaultImportance,
-                        child: Text("Default"),
-                      ),
-                      DropdownMenuItem(
-                        value: Importance.high,
-                        child: Text("High"),
-                      ),
-                      DropdownMenuItem(
-                        value: Importance.max,
-                        child: Text("Max"),
-                      ),
-                    ],
-                    onChanged: (val) {
-                      selectedImportance = val ?? selectedImportance;
-                    },
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -275,28 +346,7 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                   ),
                   onTap: pickDateAndTime,
                 ),
-                const SizedBox(height: 20),
-                CheckboxListTile(
-                  value: isPersistent,
-                  checkColor: Colors.white,
-                  contentPadding: EdgeInsets.zero,
-                  controlAffinity: ListTileControlAffinity.leading,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  checkboxShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  title: const Text(
-                    "Persistent",
-                  ),
-                  onChanged: (val) {
-                    setState(() {
-                      isPersistent = val ?? isPersistent;
-                    });
-                  },
-                ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: insertReminder,
                   child: (widget.reminder != null)

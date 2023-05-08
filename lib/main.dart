@@ -7,7 +7,7 @@ import 'package:recap/screens/home.dart';
 import 'package:recap/services/isar_service.dart';
 import 'package:recap/services/notification_service.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   SystemChrome.setSystemUIOverlayStyle(
@@ -48,6 +48,8 @@ class RecapApp extends ConsumerWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            backgroundColor: Color(settingsData.colorValue),
+            foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 60),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -98,6 +100,8 @@ class RecapApp extends ConsumerWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            backgroundColor: Color(settingsData.colorValue),
+            foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 60),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),

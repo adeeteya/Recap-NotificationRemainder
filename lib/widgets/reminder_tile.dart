@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -101,25 +103,50 @@ class ReminderTile extends ConsumerWidget {
                 horizontal: 16,
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    reminder.title,
-                    style: const TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.15,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    reminder.content,
-                    style: TextStyle(
-                      color: ListTileTheme.of(context).textColor,
-                      fontFamily: 'Poppins',
-                      letterSpacing: 0.25,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (reminder.encodedImageBytes.isNotEmpty)
+                        Container(
+                          height: 50,
+                          width: 50,
+                          margin: const EdgeInsets.only(right: 10),
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Image.memory(
+                            base64.decode(reminder.encodedImageBytes),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              reminder.title,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.15,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              reminder.content,
+                              style: TextStyle(
+                                color: ListTileTheme.of(context).textColor,
+                                fontFamily: 'Poppins',
+                                letterSpacing: 0.25,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   if (reminder.scheduledDate != null)
@@ -132,7 +159,7 @@ class ReminderTile extends ConsumerWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "${reminder.scheduledDate!.day}/${reminder.scheduledDate!.month}/${reminder.scheduledDate!.year}  ${reminder.scheduledDate!.hour}:${reminder.scheduledDate!.minute}",
+                          reminder.timeAndDateInString(),
                           style: TextStyle(
                             color: Colors.grey.shade700,
                             fontSize: 12,
@@ -159,7 +186,7 @@ class ReminderTile extends ConsumerWidget {
                           ),
                         ),
                       ],
-                    )
+                    ),
                 ],
               ),
             ),

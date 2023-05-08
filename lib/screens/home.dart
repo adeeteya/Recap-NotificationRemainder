@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:recap/controllers/reminder_controller.dart';
 import 'package:recap/controllers/settings_controller.dart';
 import 'package:recap/screens/add_reminder.dart';
@@ -103,7 +104,20 @@ class _HomeState extends ConsumerState<Home> {
           child: CircularProgressIndicator(),
         ),
         data: (data) => (data.isEmpty)
-            ? const Center(child: Text("No Reminders added yet"))
+            ? Center(
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    Lottie.asset("assets/lottie/empty_notification.json"),
+                    const SizedBox(height: 10),
+                    Text(
+                      "No Reminders Remaining",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const Spacer(flex: 2),
+                  ],
+                ),
+              )
             : ListView.builder(
                 itemCount: data.length,
                 itemBuilder: (context, index) =>

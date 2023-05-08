@@ -20,7 +20,7 @@ class NotificationService {
   }
 
   NotificationDetails notificationDetailsMaker(
-      bool isPersistent, Importance importance) {
+      bool isPersistent, String encodedImageBytes, Importance importance) {
     return NotificationDetails(
       android: AndroidNotificationDetails(
         'Recap',
@@ -32,6 +32,9 @@ class NotificationService {
         styleInformation: const BigTextStyleInformation(''),
         autoCancel: !isPersistent,
         ongoing: isPersistent,
+        largeIcon: (encodedImageBytes.isNotEmpty)
+            ? ByteArrayAndroidBitmap.fromBase64String(encodedImageBytes)
+            : null,
         enableLights: true,
         visibility: NotificationVisibility.public,
         category: AndroidNotificationCategory.reminder,
@@ -40,25 +43,31 @@ class NotificationService {
   }
 
   Future showNotification(Reminder reminder) async {
-    await _localNotifications.show(
-      reminder.id,
-      reminder.title,
-      reminder.content,
-      notificationDetailsMaker(reminder.isPersistent, reminder.importance),
-    );
+    try {
+      await _localNotifications.show(
+        reminder.id,
+        reminder.title,
+        reminder.content,
+        notificationDetailsMaker(reminder.isPersistent,
+            reminder.encodedImageBytes, reminder.importance),
+      );
+    } catch (_) {}
   }
 
   Future showScheduledNotification(Reminder reminder) async {
-    await _localNotifications.zonedSchedule(
-      reminder.id,
-      reminder.title,
-      reminder.content,
-      tz.TZDateTime.from(reminder.scheduledDate!, tz.local),
-      notificationDetailsMaker(reminder.isPersistent, reminder.importance),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.wallClockTime,
-    );
+    try {
+      await _localNotifications.zonedSchedule(
+        reminder.id,
+        reminder.title,
+        reminder.content,
+        tz.TZDateTime.from(reminder.scheduledDate!, tz.local),
+        notificationDetailsMaker(reminder.isPersistent,
+            reminder.encodedImageBytes, reminder.importance),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.wallClockTime,
+      );
+    } catch (_) {}
   }
 
   Future cancelNotification(int id) async {

@@ -1,8 +1,9 @@
-import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:recap/controllers/reminder_controller.dart';
 import 'package:recap/models/reminder.dart';
 
@@ -25,7 +26,7 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
   Importance selectedImportance = Importance.defaultImportance;
   bool isPersistent = false;
   DateTime? scheduledDateTime;
-  String encodedImageBytes = '';
+  XFile? imageFile;
 
   @override
   void initState() {
@@ -39,7 +40,7 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
           TextEditingController(text: widget.reminder!.timeAndDateInString());
       selectedImportance = widget.reminder!.importance;
       isPersistent = widget.reminder!.isPersistent;
-      encodedImageBytes = widget.reminder!.encodedImageBytes;
+      imageFile = XFile(widget.reminder!.imageFilePath);
     } else {
       _titleTextEditingController = TextEditingController();
       _contentTextEditingController = TextEditingController();
@@ -111,7 +112,7 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
           _contentTextEditingController.text.trim(),
           isPersistent,
           scheduledDateTime,
-          encodedImageBytes,
+          imageFile?.path ?? "",
           selectedImportance,
         );
         await ref
@@ -124,7 +125,7 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
           _contentTextEditingController.text.trim(),
           isPersistent,
           scheduledDateTime,
-          encodedImageBytes,
+          imageFile?.path ?? "",
           selectedImportance,
         );
         await ref
@@ -157,10 +158,12 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final XFile? imageFile = await ImagePicker()
+                        imageFile = await ImagePicker()
                             .pickImage(source: ImageSource.gallery);
-                        encodedImageBytes =
-                            base64.encode(await imageFile?.readAsBytes() ?? []);
+                        final Directory applicationDocumentsDirectory =
+                            await getApplicationDocumentsDirectory();
+                        imageFile?.saveTo(applicationDocumentsDirectory.path +
+                            (imageFile?.name ?? "image.jpg"));
                         setState(() {});
                       },
                       borderRadius: BorderRadius.circular(20),
@@ -176,11 +179,11 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                                       .fillColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: (encodedImageBytes.isNotEmpty)
+                        child: (imageFile?.path != null)
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
-                                child: Image.memory(
-                                  base64.decode(encodedImageBytes),
+                                child: Image.file(
+                                  File(imageFile?.path ?? ""),
                                   fit: BoxFit.cover,
                                 ),
                               )
@@ -287,7 +290,8 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                   controller: _titleTextEditingController,
                   textInputAction: TextInputAction.next,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(hintText: "Title"),
+                  decoration:
+                      const InputDecoration(hintText: "Enter Title Here"),
                   validator: (val) {
                     if (val?.isEmpty ?? true) return "Please enter the title";
                     return null;
@@ -312,7 +316,8 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                   controller: _contentTextEditingController,
                   minLines: 3,
                   maxLines: 6,
-                  decoration: const InputDecoration(hintText: "Content"),
+                  decoration: const InputDecoration(
+                      hintText: "Enter Notification Content Here"),
                   validator: (val) {
                     if (val?.isEmpty ?? true) return "Please enter the content";
                     return null;

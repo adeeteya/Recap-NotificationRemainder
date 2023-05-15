@@ -1,5 +1,5 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recap/models/settings_data.dart';
 import 'package:recap/services/isar_service.dart';
@@ -12,7 +12,7 @@ class SettingsNotifier extends Notifier<SettingsData> {
   SettingsData build() {
     initialize();
     return SettingsData(
-      SchedulerBinding.instance.window.platformBrightness == Brightness.dark,
+      PlatformDispatcher.instance.platformBrightness==Brightness.dark,
       true,
       Colors.amber.value,
     );
@@ -21,8 +21,7 @@ class SettingsNotifier extends Notifier<SettingsData> {
   Future initialize() async {
     state = await IsarService().isar.settingsDatas.get(0) ??
         SettingsData(
-          SchedulerBinding.instance.window.platformBrightness ==
-              Brightness.dark,
+          PlatformDispatcher.instance.platformBrightness==Brightness.dark,
           true,
           Colors.amber.value,
         );

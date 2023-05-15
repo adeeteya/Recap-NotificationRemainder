@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -107,7 +106,7 @@ class ReminderTile extends ConsumerWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (reminder.encodedImageBytes.isNotEmpty)
+                      if (reminder.imageFilePath.isNotEmpty)
                         Container(
                           height: 50,
                           width: 50,
@@ -116,8 +115,8 @@ class ReminderTile extends ConsumerWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Image.memory(
-                            base64.decode(reminder.encodedImageBytes),
+                          child: Image.file(
+                            File(reminder.imageFilePath),
                             fit: BoxFit.cover,
                           ),
                         ),

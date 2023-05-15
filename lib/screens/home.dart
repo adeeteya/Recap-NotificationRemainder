@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -65,16 +66,8 @@ class _HomeState extends ConsumerState<Home> {
             onPressed: () async {
               await Navigator.push(
                 context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, animation2) =>
-                      SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(1, 0),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: const SettingsScreen(),
-                  ),
-                ),
+                CupertinoPageRoute(
+                    builder: (context) => const SettingsScreen()),
               );
             },
           ),
@@ -85,15 +78,7 @@ class _HomeState extends ConsumerState<Home> {
         onPressed: () async {
           await Navigator.push(
             context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, animation2) => SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1, 0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: const AddReminderScreen(),
-              ),
-            ),
+            CupertinoPageRoute(builder: (context) => const AddReminderScreen()),
           );
         },
         child: const Icon(Icons.add),

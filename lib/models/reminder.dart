@@ -10,20 +10,20 @@ class Reminder {
   final String content;
   final bool isPersistent;
   final DateTime? scheduledDate;
-  final String encodedImageBytes;
+  final String imageFilePath;
 
   @enumerated
   final Importance importance;
 
   Reminder(this.title, this.content, this.isPersistent, this.scheduledDate,
-      this.encodedImageBytes, this.importance);
+      this.imageFilePath, this.importance);
 
   Reminder copyWith({
     String? title,
     String? content,
     bool? isPersistent,
     DateTime? scheduledDate,
-    String? encodedImageBytes,
+    String? imageFilePath,
     Importance? importance,
   }) {
     return Reminder(
@@ -31,7 +31,7 @@ class Reminder {
       content ?? this.content,
       isPersistent ?? this.isPersistent,
       scheduledDate,
-      encodedImageBytes ?? this.encodedImageBytes,
+      imageFilePath ?? this.imageFilePath,
       importance ?? this.importance,
     );
   }

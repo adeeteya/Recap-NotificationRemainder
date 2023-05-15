@@ -22,9 +22,9 @@ const ReminderSchema = CollectionSchema(
       name: r'content',
       type: IsarType.string,
     ),
-    r'encodedImageBytes': PropertySchema(
+    r'imageFilePath': PropertySchema(
       id: 1,
-      name: r'encodedImageBytes',
+      name: r'imageFilePath',
       type: IsarType.string,
     ),
     r'importance': PropertySchema(
@@ -70,7 +70,7 @@ int _reminderEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.content.length * 3;
-  bytesCount += 3 + object.encodedImageBytes.length * 3;
+  bytesCount += 3 + object.imageFilePath.length * 3;
   bytesCount += 3 + object.title.length * 3;
   return bytesCount;
 }
@@ -82,7 +82,7 @@ void _reminderSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.content);
-  writer.writeString(offsets[1], object.encodedImageBytes);
+  writer.writeString(offsets[1], object.imageFilePath);
   writer.writeByte(offsets[2], object.importance.index);
   writer.writeBool(offsets[3], object.isPersistent);
   writer.writeDateTime(offsets[4], object.scheduledDate);
@@ -371,142 +371,6 @@ extension ReminderQueryFilter
     });
   }
 
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'encodedImageBytes',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'encodedImageBytes',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'encodedImageBytes',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'encodedImageBytes',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'encodedImageBytes',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'encodedImageBytes',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'encodedImageBytes',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'encodedImageBytes',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'encodedImageBytes',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
-      encodedImageBytesIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'encodedImageBytes',
-        value: '',
-      ));
-    });
-  }
-
   QueryBuilder<Reminder, Reminder, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -555,6 +419,140 @@ extension ReminderQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> imageFilePathEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'imageFilePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      imageFilePathGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'imageFilePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> imageFilePathLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'imageFilePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> imageFilePathBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'imageFilePath',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      imageFilePathStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'imageFilePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> imageFilePathEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'imageFilePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> imageFilePathContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'imageFilePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition> imageFilePathMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'imageFilePath',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      imageFilePathIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'imageFilePath',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterFilterCondition>
+      imageFilePathIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'imageFilePath',
+        value: '',
       ));
     });
   }
@@ -844,15 +842,15 @@ extension ReminderQuerySortBy on QueryBuilder<Reminder, Reminder, QSortBy> {
     });
   }
 
-  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByEncodedImageBytes() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByImageFilePath() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'encodedImageBytes', Sort.asc);
+      return query.addSortBy(r'imageFilePath', Sort.asc);
     });
   }
 
-  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByEncodedImageBytesDesc() {
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> sortByImageFilePathDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'encodedImageBytes', Sort.desc);
+      return query.addSortBy(r'imageFilePath', Sort.desc);
     });
   }
 
@@ -919,18 +917,6 @@ extension ReminderQuerySortThenBy
     });
   }
 
-  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByEncodedImageBytes() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'encodedImageBytes', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByEncodedImageBytesDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'encodedImageBytes', Sort.desc);
-    });
-  }
-
   QueryBuilder<Reminder, Reminder, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -940,6 +926,18 @@ extension ReminderQuerySortThenBy
   QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByImageFilePath() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imageFilePath', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Reminder, Reminder, QAfterSortBy> thenByImageFilePathDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imageFilePath', Sort.desc);
     });
   }
 
@@ -1001,10 +999,10 @@ extension ReminderQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Reminder, Reminder, QDistinct> distinctByEncodedImageBytes(
+  QueryBuilder<Reminder, Reminder, QDistinct> distinctByImageFilePath(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'encodedImageBytes',
+      return query.addDistinctBy(r'imageFilePath',
           caseSensitive: caseSensitive);
     });
   }
@@ -1049,9 +1047,9 @@ extension ReminderQueryProperty
     });
   }
 
-  QueryBuilder<Reminder, String, QQueryOperations> encodedImageBytesProperty() {
+  QueryBuilder<Reminder, String, QQueryOperations> imageFilePathProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'encodedImageBytes');
+      return query.addPropertyName(r'imageFilePath');
     });
   }
 

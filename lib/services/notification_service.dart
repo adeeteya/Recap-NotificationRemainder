@@ -29,12 +29,12 @@ class NotificationService {
         icon: 'ic_stat_circle_notifications',
         importance: importance,
         priority: Priority.max,
-        styleInformation: const BigTextStyleInformation(''),
+        styleInformation: (encodedImageBytes.isNotEmpty)
+            ? BigPictureStyleInformation(
+                FilePathAndroidBitmap(encodedImageBytes))
+            : const BigTextStyleInformation(''),
         autoCancel: !isPersistent,
         ongoing: isPersistent,
-        largeIcon: (encodedImageBytes.isNotEmpty)
-            ? ByteArrayAndroidBitmap.fromBase64String(encodedImageBytes)
-            : null,
         enableLights: true,
         visibility: NotificationVisibility.public,
         category: AndroidNotificationCategory.reminder,
@@ -48,8 +48,8 @@ class NotificationService {
         reminder.id,
         reminder.title,
         reminder.content,
-        notificationDetailsMaker(reminder.isPersistent,
-            reminder.encodedImageBytes, reminder.importance),
+        notificationDetailsMaker(
+            reminder.isPersistent, reminder.imageFilePath, reminder.importance),
       );
     } catch (_) {}
   }
@@ -61,8 +61,8 @@ class NotificationService {
         reminder.title,
         reminder.content,
         tz.TZDateTime.from(reminder.scheduledDate!, tz.local),
-        notificationDetailsMaker(reminder.isPersistent,
-            reminder.encodedImageBytes, reminder.importance),
+        notificationDetailsMaker(
+            reminder.isPersistent, reminder.imageFilePath, reminder.importance),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.wallClockTime,

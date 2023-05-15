@@ -5,20 +5,20 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_local_notifications: ^14.0.0+1
+  flutter_local_notifications: ^14.0.0+2
   flutter_native_splash: ^2.2.19
   flutter_riverpod: ^2.3.6
   flutter_slidable: ^3.0.0
-  image_picker: ^0.8.7+4
+  image_picker: ^0.8.7+5
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
   lottie: ^2.3.2
-  path_provider: ^2.0.14
+  path_provider: ^2.0.15
   timezone: ^0.9.2
 
 dev_dependencies:
@@ -27,7 +27,7 @@ dev_dependencies:
 
   flutter_lints: ^2.0.1
   isar_generator: ^3.1.0+1
-  build_runner: ^2.3.3
+  build_runner: ^2.4.4
 
 flutter:
 

@@ -168,7 +168,12 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                         height: 150,
                         width: 150,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          color:
+                              (Theme.of(context).brightness == Brightness.dark)
+                                  ? Theme.of(context).colorScheme.surfaceVariant
+                                  : Theme.of(context)
+                                      .inputDecorationTheme
+                                      .fillColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: (encodedImageBytes.isNotEmpty)

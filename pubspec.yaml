@@ -10,8 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_local_notifications: ^14.0.0+2
-  flutter_native_splash: ^2.2.19
+  flutter_local_notifications: ^14.1.0
   flutter_riverpod: ^2.3.6
   flutter_slidable: ^3.0.0
   image_picker: ^0.8.7+5
@@ -48,15 +47,3 @@ flutter:
           weight: 600
         - asset: assets/fonts/Poppins-Bold.ttf
           weight: 700
-
-flutter_native_splash:
-  color: "#FEFBFF"
-  image: assets/icon.png
-  color_dark: "#1B1B1F"
-  image_dark: assets/icon.png
-
-  android_12:
-    color: "#FEFBFF"
-    image: assets/icon.png
-    color_dark: "#1B1B1F"
-    image_dark: assets/icon.png

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recap/controllers/settings_controller.dart';
 import 'package:recap/screens/home.dart';
@@ -8,8 +7,7 @@ import 'package:recap/services/isar_service.dart';
 import 'package:recap/services/notification_service.dart';
 
 Future<void> main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.transparent,
@@ -19,7 +17,6 @@ Future<void> main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await IsarService().init();
   await NotificationService().init();
-  FlutterNativeSplash.remove();
   runApp(const ProviderScope(child: RecapApp()));
 }
 

@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -90,6 +90,9 @@ class ReminderController extends AsyncNotifier<List<Reminder>> {
   Future deleteReminder(Reminder reminder) async {
     List<Reminder> currentState = state.value ?? [];
     state = const AsyncValue.loading();
+    if (reminder.imageFilePath.isNotEmpty) {
+      await File(reminder.imageFilePath).delete();
+    }
     await NotificationService().cancelNotification(reminder.id);
     await IsarService().isar.writeTxn(() async {
       await IsarService().isar.reminders.delete(reminder.id);

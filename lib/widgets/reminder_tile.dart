@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:recap/controllers/reminder_controller.dart';
 import 'package:recap/models/reminder.dart';
 import 'package:recap/screens/add_reminder.dart';
+import 'package:recap/extensions.dart';
 
 class ReminderTile extends ConsumerWidget {
   final Reminder reminder;
@@ -158,7 +159,7 @@ class ReminderTile extends ConsumerWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          reminder.timeAndDateInString(),
+                          reminder.scheduledDate!.timeAndDateInString,
                           style: TextStyle(
                             color: Colors.grey.shade700,
                             fontSize: 12,

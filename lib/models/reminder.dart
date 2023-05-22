@@ -35,10 +35,4 @@ class Reminder {
       importance ?? this.importance,
     );
   }
-
-  String timeAndDateInString() {
-    int hour = scheduledDate?.hour ?? 0;
-    int minute = scheduledDate?.minute ?? 0;
-    return "${hour > 12 ? hour - 12 : hour}:${minute > 9 ? minute : "0$minute"} ${(hour > 12) ? "PM" : "AM"} - ${scheduledDate?.day}/${scheduledDate?.month}/${scheduledDate?.year}";
-  }
 }

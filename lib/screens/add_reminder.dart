@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:recap/controllers/reminder_controller.dart';
 import 'package:recap/models/reminder.dart';
+import 'package:recap/extensions.dart';
 
 class AddReminderScreen extends ConsumerStatefulWidget {
   final Reminder? reminder;
@@ -36,8 +37,12 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
       _contentTextEditingController =
           TextEditingController(text: widget.reminder!.content);
       scheduledDateTime = widget.reminder?.scheduledDate;
-      _dateTextEditingController =
-          TextEditingController(text: widget.reminder!.timeAndDateInString());
+      if (scheduledDateTime != null) {
+        _dateTextEditingController = TextEditingController(
+            text: widget.reminder!.scheduledDate!.timeAndDateInString);
+      } else {
+        _dateTextEditingController = TextEditingController();
+      }
       selectedImportance = widget.reminder!.importance;
       isPersistent = widget.reminder!.isPersistent;
       imageFile = XFile(widget.reminder!.imageFilePath);
@@ -162,8 +167,9 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                             .pickImage(source: ImageSource.gallery);
                         final Directory applicationDocumentsDirectory =
                             await getApplicationDocumentsDirectory();
-                        imageFile?.saveTo(applicationDocumentsDirectory.path +
-                            (imageFile?.name ?? "image.jpg"));
+                        await imageFile?.saveTo(
+                            applicationDocumentsDirectory.path +
+                                (imageFile?.name ?? "image.jpg"));
                         setState(() {});
                       },
                       borderRadius: BorderRadius.circular(20),
@@ -171,12 +177,11 @@ class _AlertFormScreenState extends ConsumerState<AddReminderScreen> {
                         height: 150,
                         width: 150,
                         decoration: BoxDecoration(
-                          color:
-                              (Theme.of(context).brightness == Brightness.dark)
-                                  ? Theme.of(context).colorScheme.surfaceVariant
-                                  : Theme.of(context)
-                                      .inputDecorationTheme
-                                      .fillColor,
+                          color: (context.isDarkMode)
+                              ? Theme.of(context).colorScheme.surfaceVariant
+                              : Theme.of(context)
+                                  .inputDecorationTheme
+                                  .fillColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: (imageFile?.path != null)

@@ -9,7 +9,7 @@ import 'package:recap/extensions.dart';
 
 class ReminderTile extends ConsumerWidget {
   final Reminder reminder;
-  const ReminderTile({Key? key, required this.reminder}) : super(key: key);
+  const ReminderTile({super.key, required this.reminder});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

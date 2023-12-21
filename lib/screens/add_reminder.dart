@@ -11,9 +11,9 @@ import 'package:recap/extensions.dart';
 class AddReminderScreen extends ConsumerStatefulWidget {
   final Reminder? reminder;
   const AddReminderScreen({
-    Key? key,
+    super.key,
     this.reminder,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState createState() => _AlertFormScreenState();

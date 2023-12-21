@@ -21,7 +21,7 @@ Future<void> main() async {
 }
 
 class RecapApp extends ConsumerWidget {
-  const RecapApp({Key? key}) : super(key: key);
+  const RecapApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

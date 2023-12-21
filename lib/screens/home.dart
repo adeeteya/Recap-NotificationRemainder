@@ -9,7 +9,7 @@ import 'package:recap/screens/settings_screen.dart';
 import 'package:recap/widgets/reminder_tile.dart';
 
 class Home extends ConsumerStatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   ConsumerState createState() => _HomeState();

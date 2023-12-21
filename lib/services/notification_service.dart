@@ -16,7 +16,7 @@ class NotificationService {
     _localNotifications
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestPermission();
+        ?.requestNotificationsPermission();
   }
 
   NotificationDetails notificationDetailsMaker(
